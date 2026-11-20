@@ -1,6 +1,10 @@
-﻿# F2L Trainer Stage 3
+# F2L Trainer
 
-A local F2L trainer driven by the GAN i4. The virtual cube starts solved even if the physical cube is scrambled. The Bluetooth log is available under **Recent events**.
+Setting up F2L cases by hand slows down practice. When you repeat the same setups, you start to recognize the setup sequence before you’ve had a chance to read the case. And choosing an algorithm on a screen skips the physical turns that build muscle memory.
+
+This trainer generates the F2L case on screen and uses a GAN i4 as the controller. Look at the virtual cube to recognize the case, then execute the solution by turning the cube in your hands. The virtual cube responds in real time and tells you when the pair is solved. The physical cube can start in any state, so you can go straight into the next case.
+
+![F2L Trainer showing the virtual cube and practice controls](docs/trainer.png)
 
 ## Run locally
 
