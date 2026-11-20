@@ -1,0 +1,23 @@
+{
+  "name": "f2l-trainer",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "test": "node --test",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "@types/three": "^0.169.0",
+    "typescript": "~7.0.2",
+    "vite": "^8.3.6"
+  },
+  "dependencies": {
+    "cubing": "^0.66.1",
+    "rxjs": "^7.8.2",
+    "smartcube-web-bluetooth": "github:poliva/smartcube-web-bluetooth",
+    "three": "^0.170.0"
+  }
+}

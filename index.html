@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>F2L Trainer</title>
+  </head>
+  <body>
+    <main>
+      <header>
+        <h1>F2L Trainer</h1>
+      </header>
+
+      <section class="connection" aria-labelledby="connection-title">
+        <div>
+          <h2 id="connection-title">Connection</h2>
+          <p id="status" role="status">Disconnected</p>
+        </div>
+        <form id="connect">
+          <label>Cube MAC address (optional)
+            <input id="mac" placeholder="AA:BB:CC:DD:EE:FF" autocomplete="off"
+              spellcheck="false" aria-describedby="mac-help"
+              pattern="([0-9A-Fa-f]{2}:){5}[0-9A-Fa-f]{2}" />
+          </label>
+          <button type="submit">Connect Cube</button>
+          <button id="disconnect" type="button" hidden>Disconnect</button>
+        </form>
+        <div id="mac-help" class="mac-help" hidden>
+          <h3>Find your cube’s Bluetooth address on Windows</h3>
+          <ol>
+            <li>Open <code>chrome://bluetooth-internals/#devices</code> in Chrome
+              or <code>edge://bluetooth-internals/#devices</code> in Edge.</li>
+            <li>Select <strong>Start Scan</strong> and turn a face to wake the cube.
+              Copy the <strong>Address</strong> next to <strong>Gan i4</strong>.</li>
+            <li>Stop the scan, paste the address into the field above, and select
+              <strong>Connect Cube</strong> again.</li>
+          </ol>
+        </div>
+      </section>
+
+      <section class="viewer" aria-label="Virtual cube">
+        <div id="viewport" class="viewport"></div>
+        <p id="render-error" role="status" hidden></p>
+        <div class="cube-controls">
+          <button id="new-case" type="button">New Case</button>
+          <button id="open-case-selection" type="button" aria-haspopup="dialog">Select F2L Cases</button>
+          <button id="retry-case" type="button" disabled>Retry Case</button>
+          <button id="reveal-case" type="button" disabled aria-expanded="false" aria-controls="solution">Reveal Case/Solution</button>
+        </div>
+        <p id="empty-case-selection" role="status" hidden>No cases selected. Open Select F2L Cases and choose at least one.</p>
+        <p id="practice-status" role="status">Select New Case to practice the front-right slot.</p>
+        <dl id="times" class="practice-times" hidden>
+          <div><dt>Recognition</dt><dd id="recognition"></dd></div>
+          <div><dt>Execution</dt><dd id="execution"></dd></div>
+          <div><dt>Total</dt><dd id="practice-total"></dd></div>
+        </dl>
+        <p id="solution" hidden></p>
+        <div class="cube-controls reset-controls">
+          <button id="reset-cube" type="button">Reset Virtual Cube</button>
+          <button id="reset-gyro" type="button" aria-describedby="gyro-help" disabled>Reset Gyro</button>
+        </div>
+        <p id="gyro-help">Hold the chosen physical faces up and toward you, then select Reset Gyro. Use the physical turn readout to identify a face.</p>
+        <div class="cube-controls calibration-controls">
+          <label>Physical top face <select id="physical-top"></select></label>
+          <label>Physical front face <select id="physical-front"></select></label>
+        </div>
+        <p id="calibration-status" role="status">Default mapping: physical D → virtual U, physical F → virtual F.</p>
+      </section>
+
+      <dialog id="case-selection" aria-labelledby="case-selection-title">
+        <form method="dialog" class="case-dialog">
+          <h2 id="case-selection-title">Select F2L Cases</h2>
+          <div class="case-toolbar">
+            <p id="enabled-count" role="status"></p>
+            <div class="case-actions">
+              <button id="all-cases" type="button">Select All</button>
+              <button id="no-cases" type="button">Select None</button>
+            </div>
+          </div>
+          <div id="case-options"></div>
+          <div class="case-footer">
+            <a href="https://speedcubedb.com/a/3x3/F2L" target="_blank" rel="noopener noreferrer">SpeedCubeDB F2L library</a>
+            <button autofocus>Done</button>
+          </div>
+        </form>
+      </dialog>
+
+      <div class="readouts">
+        <section>
+          <h2>Last GAN face turn</h2>
+          <p id="move" class="move">—</p>
+          <p>Virtual face turn <span id="virtual-move">—</span></p>
+          <p><span id="moves">0</span> face turns</p>
+        </section>
+        <section>
+          <h2>Gyroscope quaternion</h2>
+          <dl class="quaternion">
+            <div><dt>x</dt><dd id="x">—</dd></div>
+            <div><dt>y</dt><dd id="y">—</dd></div>
+            <div><dt>z</dt><dd id="z">—</dd></div>
+            <div><dt>w</dt><dd id="w">—</dd></div>
+          </dl>
+          <p><span id="gyro">0</span> gyroscope events</p>
+        </section>
+      </div>
+
+      <details id="recent-events">
+        <summary>Recent events</summary>
+        <div class="event-log">
+          <p><span id="total">0</span> total events</p>
+          <p id="empty">Waiting for cube events.</p>
+          <ul id="log" aria-label="Recent events, newest first"></ul>
+        </div>
+      </details>
+      <details id="debug-pane">
+        <summary>F2L debugging</summary>
+        <div class="recording-controls">
+          <button id="start-recording" type="button">Start Recording</button>
+          <button id="stop-recording" type="button" disabled>Stop Recording</button>
+          <code id="recording-filename" hidden></code>
+          <button id="copy-recording-name" class="copy-link" type="button" hidden>Copy</button>
+        </div>
+        <p id="recording-status" role="status"></p>
+        <p>This report includes the case and reference solution.</p>
+        <button id="copy-debug" type="button">Copy Debug Report</button>
+        <span id="debug-copy-status" role="status"></span>
+        <textarea id="debug-report" aria-label="F2L debug report" readonly spellcheck="false"></textarea>
+      </details>
+    </main>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
