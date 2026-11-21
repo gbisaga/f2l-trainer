@@ -42,7 +42,7 @@ export function createInputRecording() {
 
   if (!browser.showSaveFilePicker) {
     start.disabled = true
-    status.textContent = 'Local recording requires Chrome or Edge with file access on localhost.'
+    status.textContent = 'Local recording requires Chrome or Edge with file access over HTTPS or on localhost.'
   }
 
   start.addEventListener('click', async () => {

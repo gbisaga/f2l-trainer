@@ -6,6 +6,8 @@ This trainer generates the F2L case on screen and uses a GAN i4 as the controlle
 
 ![F2L Trainer showing the virtual cube and practice controls](docs/trainer.png)
 
+Open the [hosted F2L Trainer](https://gbisaga.github.io/f2l-trainer/) in desktop Chrome or Edge to connect your GAN i4.
+
 ## Run locally
 
 Use Node.js 22.12 or newer. Dependencies are already installed in this workspace. For a fresh checkout, run `npm ci` first.
@@ -22,7 +24,7 @@ On Windows, open `chrome://bluetooth-internals/#devices` in Chrome or
 `edge://bluetooth-internals/#devices` in Edge. Start a scan, wake the cube,
 and copy the **Address** for **Gan i4**. Stop the scan, paste the address into
 the trainer, and reconnect. The library remembers a verified address for that
-device on the same browser and localhost origin.
+device on the same browser and site origin.
 
 ## Practice F2L
 

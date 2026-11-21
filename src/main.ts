@@ -224,7 +224,7 @@ disconnect.addEventListener('click', async () => {
 })
 
 if (!supportsBluetooth) {
-  setConnection('Web Bluetooth is unavailable. Open this page in Chrome or Edge on localhost.')
+  setConnection('Web Bluetooth is unavailable. Open this page in Chrome or Edge over HTTPS or on localhost.')
 }
 
 form.addEventListener('submit', event => {
