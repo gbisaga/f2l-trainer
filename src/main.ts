@@ -41,6 +41,7 @@ const empty = document.querySelector<HTMLElement>('#empty')!
 const newCase = document.querySelector<HTMLButtonElement>('#new-case')!
 const retryCase = document.querySelector<HTMLButtonElement>('#retry-case')!
 const hint = document.querySelector<HTMLButtonElement>('#hint')!
+const hintControl = document.querySelector<HTMLElement>('#hint-control')!
 const mode = document.querySelector<HTMLSelectElement>('#practice-mode')!
 const practiceStatus = document.querySelector('#practice-status')!
 const solution = document.querySelector<HTMLElement>('#solution')!
@@ -122,6 +123,13 @@ function updatePractice(retried = false) {
   practiceStatus.toggleAttribute('data-solved', Boolean(result))
   retryCase.disabled = !training.active
   hint.disabled = !training.active
+  if (hint.disabled) {
+    hintControl.title = 'Select New Case to enable hints.'
+    hint.setAttribute('aria-describedby', 'hint-unavailable')
+  } else {
+    hintControl.removeAttribute('title')
+    hint.removeAttribute('aria-describedby')
+  }
   times.hidden = !result
   if (result) {
     const values = { recognition: result.recognition, execution: result.execution, 'practice-total': result.total }
@@ -142,7 +150,7 @@ function hideSolution() {
 
 function updateSolution() {
   hideSolution()
-  hint.hidden = mode.value === 'learn'
+  hintControl.hidden = mode.value === 'learn'
   if (mode.value === 'learn') showSolution()
 }
 

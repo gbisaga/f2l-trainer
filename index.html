@@ -48,7 +48,10 @@
               <option value="test" selected>Test</option>
               <option value="learn">Learn</option>
             </select>
-            <button id="hint" type="button" disabled aria-expanded="false" aria-controls="solution">Hint</button>
+            <div id="hint-control" title="Select New Case to enable hints.">
+              <button id="hint" type="button" disabled aria-expanded="false" aria-controls="solution" aria-describedby="hint-unavailable">Hint</button>
+              <span id="hint-unavailable" hidden>Select New Case to enable hints.</span>
+            </div>
             <div id="solution" aria-live="polite" hidden></div>
           </aside>
         </div>
