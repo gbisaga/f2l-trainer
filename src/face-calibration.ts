@@ -28,7 +28,7 @@ export function createFaceCalibration(top: Face, front: Face) {
       const face = mapping.get(move[0] as Face)
       return face ? face + move.slice(1) : move
     },
-    toGanMove(move: string) {
+    toPhysicalMove(move: string) {
       const face = faceIds.find(candidate => mapping.get(candidate) === move[0])
       return face ? face + move.slice(1) : move
     },

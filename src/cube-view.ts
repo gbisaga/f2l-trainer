@@ -5,6 +5,7 @@ import {
 import type { Quaternion } from 'three'
 import { faces } from './virtual-cube'
 import type { VirtualCube } from './virtual-cube'
+import { TurnPresentation } from './turn-presentation'
 
 export function createCubeView(
   container: HTMLElement, cube: VirtualCube, rotation: Quaternion, onDraw: () => void,
@@ -18,10 +19,14 @@ export function createCubeView(
   const scene = new Scene()
   const camera = new PerspectiveCamera(32, 1, 0.1, 50)
   const group = new Group()
+  const layer = new Group()
+  group.add(layer)
   scene.add(group)
+  const presentation = new TurnPresentation(cube)
 
   const plastic = new MeshBasicMaterial({ color: 0x101317 })
   const cubie = new BoxGeometry(0.984, 0.984, 0.984)
+  const bodies: Mesh[] = []
   for (const x of [-1, 0, 1]) {
     for (const y of [-1, 0, 1]) {
       for (const z of [-1, 0, 1]) {
@@ -29,6 +34,7 @@ export function createCubeView(
         const body = new Mesh(cubie, plastic)
         body.position.set(x, y, z)
         group.add(body)
+        bodies.push(body)
       }
     }
   }
@@ -43,27 +49,39 @@ export function createCubeView(
   })
   const front = new Vector3(0, 0, 1)
   const normal = new Vector3()
+  const axis = new Vector3()
   let frame: number | null = null
-  let stickersDirty = true
+  let layoutNeeded = true
+  let previousTurn: ReturnType<TurnPresentation['frame']>['turn']
 
-  function draw() {
+  function draw(now: number) {
     frame = null
-    if (stickersDirty) {
-      cube.stickers.forEach((sticker, index) => {
+    const { changed, turn, angle } = presentation.frame(now)
+    if (layoutNeeded || changed || turn !== previousTurn) {
+      presentation.cube.stickers.forEach((sticker, index) => {
         const mesh = stickers[index]
         normal.fromArray(sticker.normal)
         mesh.position.fromArray(sticker.position).addScaledVector(normal, 0.495)
         mesh.quaternion.setFromUnitVectors(front, normal)
+        const parent = turn && sticker.position[turn.axis] === turn.side ? layer : group
+        if (mesh.parent !== parent) parent.add(mesh)
       })
-      stickersDirty = false
+      for (const body of bodies) {
+        const parent = turn && body.position.getComponent(turn.axis) === turn.side ? layer : group
+        if (body.parent !== parent) parent.add(body)
+      }
+      previousTurn = turn
+      layoutNeeded = false
     }
+    if (turn) layer.quaternion.setFromAxisAngle(axis.set(0, 0, 0).setComponent(turn.axis, 1), angle)
+    else layer.quaternion.identity()
     group.quaternion.copy(rotation)
     renderer.render(scene, camera)
     onDraw()
+    if (turn) requestDraw()
   }
 
-  function requestDraw(puzzleChanged = false) {
-    stickersDirty ||= puzzleChanged
+  function requestDraw() {
     if (frame === null) frame = requestAnimationFrame(draw)
   }
 
@@ -81,5 +99,15 @@ export function createCubeView(
 
   new ResizeObserver(resize).observe(container)
   resize()
-  return requestDraw
+  return {
+    requestDraw,
+    enqueueTurn(move: string) {
+      presentation.enqueue(move)
+      requestDraw()
+    },
+    replacePuzzle() {
+      presentation.replace()
+      requestDraw()
+    },
+  }
 }

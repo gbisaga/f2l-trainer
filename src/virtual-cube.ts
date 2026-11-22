@@ -14,6 +14,14 @@ export const faces = {
 export type Face = keyof typeof faces
 export type Sticker = { position: Coordinates; normal: Coordinates; color: Face }
 
+export function parseFaceTurn(move: string) {
+  if (!/^[RLUDFB](?:'|2)?$/.test(move)) return
+  const { axis, side } = faces[move[0] as Face]
+  const direction = move.endsWith("'") ? side : -side
+  const turns = move.endsWith('2') ? 2 : 1
+  return { axis, side, direction, turns }
+}
+
 function rotateQuarter(vector: Coordinates, axis: Axis, direction: number): Coordinates {
   const first = (axis + 1) % 3
   const second = (axis + 2) % 3
@@ -58,10 +66,9 @@ export class VirtualCube {
   }
 
   applyMove(move: string) {
-    if (!/^[RLUDFB](?:'|2)?$/.test(move)) return false
-    const { axis, side } = faces[move[0] as Face]
-    const direction = move.endsWith("'") ? side : -side
-    const turns = move.endsWith('2') ? 2 : 1
+    const turn = parseFaceTurn(move)
+    if (!turn) return false
+    const { axis, side, direction, turns } = turn
     for (const sticker of this.current) {
       if (sticker.position[axis] !== side) continue
       for (let turn = 0; turn < turns; turn++) {

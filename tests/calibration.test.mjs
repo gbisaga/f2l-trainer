@@ -31,7 +31,7 @@ test('all 24 adjacent-face calibrations map six faces and preserve turn directio
         const mapped = calibration.mapMove(face)
         assert.equal(calibration.mapMove(`${face}'`), `${mapped}'`)
         assert.equal(calibration.mapMove(`${face}2`), `${mapped}2`)
-        assert.equal(calibration.toGanMove(`${mapped}'`), `${face}'`)
+        assert.equal(calibration.toPhysicalMove(`${mapped}'`), `${face}'`)
         const { axis, side } = faces[face]
         const direction = new Vector3().setComponent(axis, side).applyQuaternion(calibration.physicalToVirtual)
         const mappedNormal = new Vector3().setComponent(faces[mapped].axis, faces[mapped].side)

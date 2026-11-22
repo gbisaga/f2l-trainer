@@ -89,9 +89,9 @@ recentEvents.addEventListener('toggle', () => {
   log.replaceChildren(...state.recent.map(createLogRow))
 })
 
-let requestDraw: ReturnType<typeof createCubeView> | undefined
+let cubeView: ReturnType<typeof createCubeView> | undefined
 try {
-  requestDraw = createCubeView(
+  cubeView = createCubeView(
     document.querySelector<HTMLElement>('#viewport')!, virtualCube, orientation.rotation,
     () => training.markPresented(performance.now()),
   )
@@ -106,7 +106,7 @@ try {
 let previousCase: number | undefined
 
 const enabledCases = initializeCaseSelection(count => {
-  newCase.disabled = !requestDraw || count === 0
+  newCase.disabled = !cubeView || count === 0
   emptyCaseSelection.hidden = count > 0
 })
 
@@ -145,7 +145,7 @@ newCase.addEventListener('click', () => {
   hideSolution()
   updatePractice()
   debug.clearTurns('New Case')
-  requestDraw?.(true)
+  cubeView?.replacePuzzle()
 })
 
 retryCase.addEventListener('click', () => {
@@ -153,7 +153,7 @@ retryCase.addEventListener('click', () => {
   hideSolution()
   updatePractice(true)
   debug.clearTurns('Retry Case')
-  requestDraw?.(true)
+  cubeView?.replacePuzzle()
 })
 
 function showSolution() {
@@ -161,11 +161,11 @@ function showSolution() {
   if (!reference) return
   const algorithm = document.createElement('code')
   algorithm.textContent = reference.algorithm
-  const ganAlgorithm = document.createElement('code')
-  ganAlgorithm.textContent = reference.algorithm.split(/\s+/).map(move => calibration.toGanMove(move)).join(' ')
+  const physicalAlgorithm = document.createElement('code')
+  physicalAlgorithm.textContent = reference.algorithm.split(/\s+/).map(move => calibration.toPhysicalMove(move)).join(' ')
   solution.replaceChildren(
     `F2L ${reference.number} · Virtual moves from the initial position: `, algorithm,
-    document.createElement('br'), 'Expected GAN readout: ', ganAlgorithm,
+    document.createElement('br'), 'Expected physical face readout: ', physicalAlgorithm,
   )
   solution.hidden = false
   revealCase.setAttribute('aria-expanded', 'true')
@@ -194,7 +194,7 @@ resetCube.addEventListener('click', () => {
   hideSolution()
   updatePractice()
   debug.clearTurns('Reset Virtual Cube')
-  requestDraw?.(true)
+  cubeView?.replacePuzzle()
 })
 
 resetGyro.addEventListener('click', () => {
@@ -207,7 +207,7 @@ resetGyro.addEventListener('click', () => {
   calibrationStatus.textContent = `Calibrated: physical ${top} → virtual U, physical ${front} → virtual F.`
   if (!solution.hidden) showSolution()
   debug.changed()
-  requestDraw?.()
+  cubeView?.requestDraw()
 })
 
 disconnect.addEventListener('click', async () => {
@@ -239,7 +239,7 @@ form.addEventListener('submit', event => {
     onConnected: (name, close) => {
       disconnectCube = close
       orientation.startSession()
-      requestDraw?.()
+      cubeView?.requestDraw()
       macHelp.hidden = true
       setConnection(`Connected to ${name || 'cube'}`, true)
     },
@@ -275,7 +275,7 @@ form.addEventListener('submit', event => {
         const completedAttempt = applied && training.recordTurn(receivedAt)
         if (applied) {
           if (completedAttempt || justRetried) updatePractice()
-          requestDraw?.(true)
+          cubeView?.enqueueTurn(mappedMove)
         }
         debug.recordTurn({
           physical: event.move, virtual: mappedMove, serial: event.serial,
@@ -288,8 +288,8 @@ form.addEventListener('submit', event => {
       }
       if (event.type === 'GYRO') {
         if (orientation.update(event.quaternion)) {
-          resetGyro.disabled = !requestDraw
-          requestDraw?.()
+          resetGyro.disabled = !cubeView
+          cubeView?.requestDraw()
         }
         gyro.textContent = String(state.gyroEvents)
         formatQuaternion(event.quaternion).forEach((value, index) => {

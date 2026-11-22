@@ -56,7 +56,7 @@ export function createInputRecording() {
       copy.hidden = false
       copy.textContent = 'Copy'
       stop.disabled = false
-      status.textContent = 'Recording GAN moves and facelet snapshots.'
+      status.textContent = 'Recording physical cube moves and facelet snapshots.'
       void current.closed.catch(() => {
         if (writer !== current) return
         writer = undefined
