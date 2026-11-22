@@ -10,7 +10,7 @@ Open the [hosted F2L Trainer](https://gbisaga.github.io/f2l-trainer/) in desktop
 
 ## Cube compatibility
 
-Tested with the GAN i4. Other Bluetooth 3×3 smart cubes supported by [smartcube-web-bluetooth](https://github.com/poliva/smartcube-web-bluetooth) may work for turn input. Gyro-controlled viewing requires the cube to send orientation data, and the current gyro axis convention has been checked on the GAN i4.
+The GAN i4 is the only model tested so far. Other Bluetooth 3×3 smart cubes supported by [smartcube-web-bluetooth](https://github.com/poliva/smartcube-web-bluetooth) may work for turn input. Gyro-controlled viewing requires orientation data, and the gyro axis mapping may vary by model.
 
 ## Run locally
 
@@ -42,22 +42,22 @@ The [SpeedCubeDB F2L library](https://www.speedcubedb.com/a/3x3/F2L) defines the
 
 ## Face calibration
 
-The default mapping treats physical face D as virtual U and physical face F as virtual F. Hold the cube with those physical faces up and forward on first connection. For another grip, choose the two adjacent physical face identifiers in the calibration controls, hold them up and forward, then select **Reset Gyro** once gyro readings arrive. The last physical turn readout shows the face ID reported by your cube.
+For the default grip, connect with your cube’s **yellow center on top** and **green center facing you**. To calibrate a different grip, choose which center you want on top and which you want facing you. Turn each of those faces once to see the ID your cube reports under **Last physical face turn**. Select those IDs in the calibration controls, hold the cube in the chosen grip, and select **Reset Gyro** once gyro readings arrive.
 
-Calibration maps all six physical face identifiers to virtual faces. Whole-cube motion changes where those faces appear on screen. For example, after mapping physical D to virtual U, a physical D turn still turns virtual U when that face is viewed from the side. Reset Gyro preserves the scramble and timers. Reset Virtual Cube preserves the mapping and view. The Bluetooth adapter keeps facelet events as log markers and discards the sticker payload.
+Calibration maps all six physical faces to virtual faces. When you rotate the whole cube, each physical face still turns its mapped virtual face as it moves around the screen. Reset Gyro preserves the scramble and timers. Reset Virtual Cube preserves the mapping and view. The Bluetooth adapter keeps facelet events as log markers and discards the sticker payload.
 
-## Test with a GAN i4
+## Test with your cube
 
-1. Hold GAN face D up and F forward. Connect and check that the virtual cube starts solved with yellow up and green front, even if the physical puzzle is scrambled. The first valid gyro sample becomes the reference.
-2. Turn physical L clockwise. With the default mapping, check that virtual R turns immediately. Reset the virtual cube, perform physical `L D L' D'`, and check that the virtual result follows `R U R' U'`.
+1. Hold your cube with its yellow center on top and its green center facing you. Connect and check that the virtual cube starts solved in the same orientation, even if your cube is scrambled. The first valid gyro sample becomes the reference.
+2. Turn the face on your right clockwise as viewed from that face. Check that the virtual right layer responds and the move readout shows `R`. Reset the virtual cube, then use the right and top faces to do `R U R' U'` and compare the virtual result.
 3. Rotate the whole cube about each axis. Check that the view follows in the same direction and the move count stays fixed.
-4. Rotate the cube 90 degrees, then turn physical L again. Virtual R should turn in its new screen position and the physical event log should still report `L`.
-5. With the virtual puzzle scrambled, select physical R for the top and F for the front. Hold them up and forward and select **Reset Gyro**. The virtual cube returns to the yellow-up, green-front view with its scramble intact. A physical R turn should now apply virtual U.
+4. Rotate your cube 90 degrees, then turn the same face you turned in step 2. The virtual right layer should turn in its new screen position and the physical event log should report the same face ID as before.
+5. With the virtual puzzle scrambled, calibrate a different grip using **Reset Gyro**. The virtual cube returns to the yellow-up, green-front view with its scramble intact. Turning the physical face you chose as the top should now apply virtual `U`.
 6. Rotate away from the home view and select **Reset Virtual Cube**. The puzzle becomes solved in its current viewing orientation. Make another face turn and confirm it applies from solved.
 7. Repeat a quick sequence slowly after resetting. Compare the turn count and final virtual state. The log shows the latest 20 events, including gyro readings.
 8. Disconnect and reconnect. The virtual puzzle persists, and the first gyro sample sets a fresh orientation reference.
 
-GAN move labels are fixed to the physical centers. The [GAN sample](https://github.com/afedotov/gan-cube-sample/blob/main/src/index.ts) supplies the gyro axis convention. Check the direction of all three axes on the i4. The renderer requires WebGL 2.
+The renderer requires WebGL 2.
 
 Run `npm run build` to type-check and build the app.
 
