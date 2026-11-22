@@ -58,6 +58,11 @@ button:disabled { opacity: 0.55; cursor: default; }
 #practice-status[data-solved] { color: #83e5c1; font-weight: 700; }
 .practice-times:not([hidden]) { display: flex; justify-content: center; gap: 1.4rem; flex-wrap: wrap; }
 #solution code { color: #83e5c1; white-space: normal; }
+.practice-view { display: grid; grid-template-columns: minmax(0, 1fr) 13rem; gap: 1rem; margin-bottom: 1rem; }
+.practice-tools { display: grid; align-content: start; gap: 0.55rem; text-align: left; }
+.practice-tools select { font: inherit; padding: 0.4rem; }
+#solution p { margin-top: 0.75rem; }
+#solution code { display: block; margin-top: 0.25rem; }
 #case-selection {
   width: min(29rem, calc(100% - 2rem));
   max-height: calc(100% - 2rem);
@@ -106,6 +111,7 @@ li:first-child { margin-top: 1rem; }
 time { color: #aabed1; }
 
 @media (max-width: 38rem) {
+  .practice-view { grid-template-columns: 1fr; }
   main { margin: 1.5rem auto; }
   .readouts { grid-template-columns: 1fr; }
   .quaternion { grid-template-columns: repeat(2, 1fr); }

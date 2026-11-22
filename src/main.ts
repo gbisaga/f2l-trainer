@@ -40,9 +40,10 @@ const recentEvents = document.querySelector<HTMLDetailsElement>('#recent-events'
 const empty = document.querySelector<HTMLElement>('#empty')!
 const newCase = document.querySelector<HTMLButtonElement>('#new-case')!
 const retryCase = document.querySelector<HTMLButtonElement>('#retry-case')!
-const revealCase = document.querySelector<HTMLButtonElement>('#reveal-case')!
+const hint = document.querySelector<HTMLButtonElement>('#hint')!
+const mode = document.querySelector<HTMLSelectElement>('#practice-mode')!
 const practiceStatus = document.querySelector('#practice-status')!
-const solution = document.querySelector<HTMLParagraphElement>('#solution')!
+const solution = document.querySelector<HTMLElement>('#solution')!
 const times = document.querySelector<HTMLElement>('#times')!
 const emptyCaseSelection = document.querySelector<HTMLElement>('#empty-case-selection')!
 const debug = createDebugPane(() => ({
@@ -99,7 +100,7 @@ try {
   const renderError = document.querySelector<HTMLElement>('#render-error')!
   renderError.textContent = '3D rendering is unavailable. Check that your browser supports WebGL 2.'
   renderError.hidden = false
-  renderError.previousElementSibling?.setAttribute('hidden', '')
+  document.getElementById('viewport')!.hidden = true
   resetCube.disabled = true
 }
 
@@ -120,7 +121,7 @@ function updatePractice(retried = false) {
     : 'Select New Case to practice the front-right slot.'
   practiceStatus.toggleAttribute('data-solved', Boolean(result))
   retryCase.disabled = !training.active
-  revealCase.disabled = !training.active
+  hint.disabled = !training.active
   times.hidden = !result
   if (result) {
     const values = { recognition: result.recognition, execution: result.execution, 'practice-total': result.total }
@@ -130,11 +131,19 @@ function updatePractice(retried = false) {
   }
 }
 
+let hintTimeout: number | undefined
+
 function hideSolution() {
+  window.clearTimeout(hintTimeout)
   solution.hidden = true
   solution.replaceChildren()
-  revealCase.setAttribute('aria-expanded', 'false')
-  revealCase.textContent = 'Reveal Case/Solution'
+  hint.setAttribute('aria-expanded', 'false')
+}
+
+function updateSolution() {
+  hideSolution()
+  hint.hidden = mode.value === 'learn'
+  if (mode.value === 'learn') showSolution()
 }
 
 newCase.addEventListener('click', () => {
@@ -142,7 +151,7 @@ newCase.addEventListener('click', () => {
   if (!definition) return
   training.start(definition, alignments[Math.floor(Math.random() * alignments.length)])
   previousCase = definition.number
-  hideSolution()
+  updateSolution()
   updatePractice()
   debug.clearTurns('New Case')
   cubeView?.replacePuzzle()
@@ -150,7 +159,7 @@ newCase.addEventListener('click', () => {
 
 retryCase.addEventListener('click', () => {
   training.retry()
-  hideSolution()
+  updateSolution()
   updatePractice(true)
   debug.clearTurns('Retry Case')
   cubeView?.replacePuzzle()
@@ -163,18 +172,22 @@ function showSolution() {
   algorithm.textContent = reference.algorithm
   const physicalAlgorithm = document.createElement('code')
   physicalAlgorithm.textContent = reference.algorithm.split(/\s+/).map(move => calibration.toPhysicalMove(move)).join(' ')
-  solution.replaceChildren(
-    `F2L ${reference.number} · Virtual moves from the initial position: `, algorithm,
-    document.createElement('br'), 'Expected physical face readout: ', physicalAlgorithm,
-  )
+  const virtualLabel = document.createElement('p')
+  virtualLabel.append(`F2L ${reference.number} · Virtual moves from the start`, algorithm)
+  const physicalLabel = document.createElement('p')
+  physicalLabel.append('Expected physical face readout', physicalAlgorithm)
+  solution.replaceChildren(virtualLabel, physicalLabel)
   solution.hidden = false
-  revealCase.setAttribute('aria-expanded', 'true')
-  revealCase.textContent = 'Hide Case/Solution'
+  hint.setAttribute('aria-expanded', 'true')
 }
 
-revealCase.addEventListener('click', () => {
-  if (solution.hidden) showSolution()
-  else hideSolution()
+mode.addEventListener('change', updateSolution)
+updateSolution()
+
+hint.addEventListener('click', () => {
+  window.clearTimeout(hintTimeout)
+  showSolution()
+  hintTimeout = window.setTimeout(hideSolution, 5000)
 })
 
 let disconnectCube: (() => Promise<void>) | undefined
@@ -191,7 +204,7 @@ function setConnection(message: string, busy = false) {
 resetCube.addEventListener('click', () => {
   training.cancel()
   virtualCube.reset()
-  hideSolution()
+  updateSolution()
   updatePractice()
   debug.clearTurns('Reset Virtual Cube')
   cubeView?.replacePuzzle()
