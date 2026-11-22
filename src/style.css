@@ -7,9 +7,8 @@
 
 * { box-sizing: border-box; }
 body { margin: 0; }
-main { width: min(58rem, calc(100% - 2rem)); margin: 3rem auto; }
-header { margin-bottom: 2rem; }
-h1 { margin: 0.25rem 0; font-size: clamp(2rem, 6vw, 3.5rem); letter-spacing: -0.04em; }
+main { width: min(58rem, calc(100% - 2rem)); margin: 0.85rem auto; }
+h1 { margin: 0; font-size: clamp(1.5rem, 4vw, 2rem); letter-spacing: -0.04em; }
 h2 { margin: 0; font-size: 1.1rem; }
 p { margin: 0.55rem 0 0; color: #aabed1; }
 .label { color: #83e5c1; font-size: 0.875rem; font-weight: 650; }
@@ -30,6 +29,10 @@ section, details {
 }
 
 form { align-items: end; }
+.connection { padding: 0 0.15rem 0.75rem; gap: 0.65rem; }
+.connection #status { margin-top: 0.2rem; font-size: 0.875rem; }
+#connect { gap: 0.55rem; }
+#connect label { gap: 0.2rem; }
 .mac-help { flex-basis: 100%; border-top: 1px solid #2c4054; padding-top: 1rem; }
 .mac-help h3 { margin: 0; font-size: 1rem; }
 .mac-help ol { padding-inline-start: 1.4rem; margin-bottom: 0; }
@@ -41,24 +44,27 @@ button { border: 1px solid transparent; background: #83e5c1; color: #092318; fon
 button:disabled { opacity: 0.55; cursor: default; }
 :focus-visible { outline: 2px solid #a3e9ff; outline-offset: 3px; }
 .readouts { display: grid; grid-template-columns: 1fr 2fr; gap: 1rem; margin: 1rem 0; }
-.viewer { margin-top: 1rem; text-align: center; }
+.viewer { padding: 0.8rem; }
 .viewport {
   height: clamp(16rem, 55vh, 28rem);
   background: radial-gradient(ellipse, #30475e, #132131 70%);
 }
 .viewport canvas { display: block; width: 100%; height: 100%; }
-.cube-controls { display: flex; justify-content: center; gap: 0.65rem; flex-wrap: wrap; }
+.cube-controls { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+.cube-controls button, #connect button, #connect input { padding: 0.45rem 0.65rem; }
 .cube-controls button, #disconnect { background: #263b4f; color: #e8f1fa; border-color: #536a80; }
 .cube-controls #new-case { background: #83e5c1; color: #092318; }
-.reset-controls { margin-top: 1.2rem; }
-.calibration-controls { margin-top: 0.65rem; }
-.calibration-controls label { display: flex; align-items: center; }
-.calibration-controls select { font: inherit; }
+.mode-control { display: flex; align-items: center; }
+.mode-control select { font: inherit; padding: 0.4rem; }
+.calibration-controls { padding: 0.55rem; }
+.calibration-controls summary { font-size: 0.875rem; }
+.calibration-controls label { margin-top: 0.4rem; display: flex; align-items: center; justify-content: space-between; }
+.calibration-controls label select { width: auto; }
 #calibration-status { font-size: 0.875rem; }
 #practice-status[data-solved] { color: #83e5c1; font-weight: 700; }
-.practice-times:not([hidden]) { display: flex; justify-content: center; gap: 1.4rem; flex-wrap: wrap; }
+.practice-times:not([hidden]) { display: flex; gap: 1.4rem; flex-wrap: wrap; margin: 0.6rem 0 0; }
 #solution code { color: #83e5c1; white-space: normal; }
-.practice-view { display: grid; grid-template-columns: minmax(0, 1fr) 13rem; gap: 1rem; margin-bottom: 1rem; }
+.practice-view { display: grid; grid-template-columns: minmax(0, 1fr) 13rem; gap: 0.8rem; margin-top: 0.7rem; }
 .practice-tools { display: grid; align-content: start; gap: 0.55rem; text-align: left; }
 .practice-tools select { width: 100%; min-width: 0; font: inherit; padding: 0.4rem; }
 #solution-choice[hidden] { display: none; }
@@ -115,7 +121,7 @@ time { color: #aabed1; }
 
 @media (max-width: 38rem) {
   .practice-view { grid-template-columns: 1fr; }
-  main { margin: 1.5rem auto; }
+  main { margin: 0.65rem auto; }
   .readouts { grid-template-columns: 1fr; }
   .quaternion { grid-template-columns: repeat(2, 1fr); }
 }

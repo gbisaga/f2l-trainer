@@ -7,13 +7,9 @@
   </head>
   <body>
     <main>
-      <header>
-        <h1>F2L Trainer</h1>
-      </header>
-
-      <section class="connection" aria-labelledby="connection-title">
+      <header class="connection">
         <div>
-          <h2 id="connection-title">Connection</h2>
+          <h1>F2L Trainer</h1>
           <p id="status" role="status">Disconnected</p>
         </div>
         <form id="connect">
@@ -36,32 +32,21 @@
               <strong>Connect Cube</strong> again.</li>
           </ol>
         </div>
-      </section>
+      </header>
 
       <section class="viewer" aria-label="Virtual cube">
-        <p id="render-error" role="status" hidden></p>
-        <div class="practice-view">
-          <div id="viewport" class="viewport"></div>
-          <aside class="practice-tools" aria-label="Practice options">
-            <label for="practice-mode">Practice mode</label>
+        <div class="cube-controls" role="group" aria-label="Practice controls">
+          <button id="new-case" type="button">New Case</button>
+          <button id="retry-case" type="button" disabled>Retry Case</button>
+          <button id="open-case-selection" type="button" aria-haspopup="dialog">Select F2L Cases</button>
+          <label class="mode-control">Mode
             <select id="practice-mode">
               <option value="test" selected>Test</option>
               <option value="learn">Learn</option>
             </select>
-            <div id="hint-control" title="Select New Case to enable hints.">
-              <button id="hint" type="button" disabled aria-expanded="false" aria-controls="solution" aria-describedby="hint-unavailable">Hint</button>
-              <span id="hint-unavailable" hidden>Select New Case to enable hints.</span>
-            </div>
-            <label id="solution-choice" hidden>SpeedCubeDB solution
-              <select id="solution-option"></select>
-            </label>
-            <div id="solution" aria-live="polite" hidden></div>
-          </aside>
-        </div>
-        <div class="cube-controls">
-          <button id="new-case" type="button">New Case</button>
-          <button id="open-case-selection" type="button" aria-haspopup="dialog">Select F2L Cases</button>
-          <button id="retry-case" type="button" disabled>Retry Case</button>
+          </label>
+          <button id="reset-cube" type="button">Reset Virtual Cube</button>
+          <button id="reset-gyro" type="button" aria-describedby="gyro-help" disabled>Reset Gyro</button>
         </div>
         <p id="empty-case-selection" role="status" hidden>No cases selected. Open Select F2L Cases and choose at least one.</p>
         <p id="practice-status" role="status">Select New Case to practice the front-right slot.</p>
@@ -70,16 +55,27 @@
           <div><dt>Execution</dt><dd id="execution"></dd></div>
           <div><dt>Total</dt><dd id="practice-total"></dd></div>
         </dl>
-        <div class="cube-controls reset-controls">
-          <button id="reset-cube" type="button">Reset Virtual Cube</button>
-          <button id="reset-gyro" type="button" aria-describedby="gyro-help" disabled>Reset Gyro</button>
+        <p id="render-error" role="status" hidden></p>
+        <div class="practice-view">
+          <div id="viewport" class="viewport"></div>
+          <aside class="practice-tools" aria-label="Practice options">
+            <div id="hint-control" title="Select New Case to enable hints.">
+              <button id="hint" type="button" disabled aria-expanded="false" aria-controls="solution" aria-describedby="hint-unavailable">Hint</button>
+              <span id="hint-unavailable" hidden>Select New Case to enable hints.</span>
+            </div>
+            <label id="solution-choice" hidden>SpeedCubeDB solution
+              <select id="solution-option"></select>
+            </label>
+            <div id="solution" aria-live="polite" hidden></div>
+            <details class="calibration-controls">
+              <summary>Gyro calibration</summary>
+              <p id="gyro-help">Hold the chosen physical faces up and toward you, then select Reset Gyro. Use the physical turn readout to identify a face.</p>
+              <label>Physical top face <select id="physical-top"></select></label>
+              <label>Physical front face <select id="physical-front"></select></label>
+              <p id="calibration-status" role="status">Default mapping: physical D → virtual U, physical F → virtual F.</p>
+            </details>
+          </aside>
         </div>
-        <p id="gyro-help">Hold the chosen physical faces up and toward you, then select Reset Gyro. Use the physical turn readout to identify a face.</p>
-        <div class="cube-controls calibration-controls">
-          <label>Physical top face <select id="physical-top"></select></label>
-          <label>Physical front face <select id="physical-front"></select></label>
-        </div>
-        <p id="calibration-status" role="status">Default mapping: physical D → virtual U, physical F → virtual F.</p>
       </section>
 
       <dialog id="case-selection" aria-labelledby="case-selection-title">
