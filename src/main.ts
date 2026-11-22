@@ -186,11 +186,13 @@ function showSolution() {
   algorithm.textContent = reference.algorithm
   const physicalAlgorithm = document.createElement('code')
   physicalAlgorithm.textContent = reference.algorithm.split(/\s+/).map(move => calibration.toPhysicalMove(move)).join(' ')
-  const virtualLabel = document.createElement('p')
-  virtualLabel.append(`F2L ${reference.number} · Virtual moves from the start`, algorithm)
+  const directions = document.createElement('p')
+  directions.textContent = 'Make these turns on your cube from the New Case or Retry Case position. Any top-layer turn needed to line up the pair is included.'
+  const steps = document.createElement('p')
+  steps.append(`F2L ${reference.number} · Turns to make`, algorithm)
   const physicalLabel = document.createElement('p')
-  physicalLabel.append('Expected physical face readout', physicalAlgorithm)
-  solution.replaceChildren(virtualLabel, physicalLabel)
+  physicalLabel.append('Face IDs reported by your cube', physicalAlgorithm)
+  solution.replaceChildren(steps, directions, physicalLabel)
   solution.hidden = false
   hint.setAttribute('aria-expanded', 'true')
 }

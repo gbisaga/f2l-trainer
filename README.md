@@ -33,12 +33,14 @@ device on the same browser and site origin.
 ## Practice F2L
 
 1. Connect your smart cube, then open **Select F2L Cases** to choose any subset of the 41 cases, grouped by SpeedCubeDB category. All cases are enabled on first use and selections are saved in the browser.
-2. Select **New Case**. The trainer picks from the pool, avoids repeating the previous case when possible, and randomizes the U-layer alignment. The target stays front-right.
+2. Select **New Case**. The trainer picks from your selected cases and avoids repeating the previous one when possible. It can start the top layer at a different angle each time. The target slot is always front-right.
 3. Solve the target pair with physical face turns. The trainer checks the target corner and edge, the cross, and the other three slots. The last layer may remain scrambled. Recognition, execution, and total times appear when the attempt is solved. Face turns animate at a relaxed pace. During a burst, the display can skip animations to catch up while every turn still counts.
-4. Choose **Learn** to pick from the first four SpeedCubeDB solutions in their listed order, or **Test** to practice recognition. In Test, **Hint** shows the first solution for five seconds. The displayed moves use fixed faces, account for the starting U-layer alignment, and combine consecutive turns of the same face. Select **Retry Case** to restore the starting position and restart timing.
+4. Choose **Learn** to pick from the first four SpeedCubeDB solutions in their listed order, or **Test** to practice recognition. In Test, **Hint** shows the first solution for five seconds. Make the listed turns on your cube from the position shown when you click **New Case** or **Retry Case**. The steps already include any top-layer turn needed to line up the pair. **Retry Case** restores that position and restarts timing.
 5. **Reset Gyro** adjusts the view during practice. **Reset Virtual Cube** leaves the exercise and returns to free turning on a solved cube.
 
-The [SpeedCubeDB F2L library](https://www.speedcubedb.com/a/3x3/F2L) defines the case numbering and source setups. Virtual U is yellow, D is white (the cross), and F is green. Reference algorithms use virtual face labels. Cases 8 and 13 use outer-turn setups with matching target-piece configurations. Timings use the first rendered frame and the browser's receipt of face-turn events.
+Read the solution with the yellow center up and the green center facing you. In that grip, `U` means turn the top, `R` means turn the right face, and `F` means turn the front. The **Face IDs reported by your cube** line helps you compare the solution with the Bluetooth readout if your cube labels those faces differently.
+
+The [SpeedCubeDB F2L library](https://www.speedcubedb.com/a/3x3/F2L) defines the case numbering and source setups. Cases 8 and 13 use outer-turn setups with matching target-piece configurations. Timings use the first rendered frame and the browser's receipt of face-turn events.
 
 ## Face calibration
 
