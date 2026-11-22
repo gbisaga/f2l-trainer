@@ -60,7 +60,8 @@ button:disabled { opacity: 0.55; cursor: default; }
 #solution code { color: #83e5c1; white-space: normal; }
 .practice-view { display: grid; grid-template-columns: minmax(0, 1fr) 13rem; gap: 1rem; margin-bottom: 1rem; }
 .practice-tools { display: grid; align-content: start; gap: 0.55rem; text-align: left; }
-.practice-tools select { font: inherit; padding: 0.4rem; }
+.practice-tools select { width: 100%; min-width: 0; font: inherit; padding: 0.4rem; }
+#solution-choice[hidden] { display: none; }
 #hint-control button { width: 100%; }
 #hint:disabled { pointer-events: none; }
 #solution p { margin-top: 0.75rem; }

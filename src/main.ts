@@ -43,6 +43,8 @@ const retryCase = document.querySelector<HTMLButtonElement>('#retry-case')!
 const hint = document.querySelector<HTMLButtonElement>('#hint')!
 const hintControl = document.querySelector<HTMLElement>('#hint-control')!
 const mode = document.querySelector<HTMLSelectElement>('#practice-mode')!
+const solutionChoice = document.querySelector<HTMLElement>('#solution-choice')!
+const solutionOption = document.querySelector<HTMLSelectElement>('#solution-option')!
 const practiceStatus = document.querySelector('#practice-status')!
 const solution = document.querySelector<HTMLElement>('#solution')!
 const times = document.querySelector<HTMLElement>('#times')!
@@ -150,14 +152,18 @@ function hideSolution() {
 
 function updateSolution() {
   hideSolution()
-  hintControl.hidden = mode.value === 'learn'
-  if (mode.value === 'learn') showSolution()
+  const learning = mode.value === 'learn'
+  hintControl.hidden = learning
+  solutionChoice.hidden = !learning || !training.active
+  if (learning) showSolution()
 }
 
 newCase.addEventListener('click', () => {
   const definition = pickCase(enabledCases(), previousCase)
   if (!definition) return
   training.start(definition, alignments[Math.floor(Math.random() * alignments.length)])
+  solutionOption.replaceChildren(...training.solutionOptions.map(([notation], index) =>
+    new Option(`${index + 1}. ${notation}`, String(index))))
   previousCase = definition.number
   updateSolution()
   updatePractice()
@@ -174,7 +180,7 @@ retryCase.addEventListener('click', () => {
 })
 
 function showSolution() {
-  const reference = training.reference
+  const reference = training.solution(mode.value === 'learn' ? solutionOption.selectedIndex : 0)
   if (!reference) return
   const algorithm = document.createElement('code')
   algorithm.textContent = reference.algorithm
@@ -190,6 +196,7 @@ function showSolution() {
 }
 
 mode.addEventListener('change', updateSolution)
+solutionOption.addEventListener('change', showSolution)
 updateSolution()
 
 hint.addEventListener('click', () => {

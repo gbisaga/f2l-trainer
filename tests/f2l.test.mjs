@@ -47,6 +47,12 @@ for (const definition of cases) {
       })
       assert.equal(protectedPiecesSolved(cube, 'FR'), true)
       assert.equal(isF2LSolved(cube, 'FR'), false)
+      definition.solutions.forEach((_, index) => {
+        const alternate = new VirtualCube()
+        alternate.copyFrom(cube)
+        apply(alternate, alignedSolution(definition, alignment, index))
+        assert.equal(isF2LSolved(alternate, 'FR'), true, `solution ${index + 1}`)
+      })
       apply(cube, alignedSolution(definition, alignment))
       assert.equal(isF2LSolved(cube, 'FR'), true)
       apply(cube, 'U')
@@ -59,6 +65,14 @@ for (const definition of cases) {
     }
   })
 }
+
+test('F2L 10 defaults to SpeedCubeDB’s first solution and combines its alignment turns', () => {
+  const definition = cases[9]
+  assert.equal(alignedSolution(definition, ''), "U' R U R' U R U R'")
+  assert.equal(alignedSolution(definition, 'U'), "U2 R U R' U R U R'")
+  assert.equal(alignedSolution(definition, "U'"), "R U R' U R U R'")
+  assert.equal(alignedSolution(definition, '', 1), "U2 R U' R' U' R U R'")
+})
 
 test('rejects a mismatched target configuration and a setup that damages protected pieces', () => {
   const definition = cases[0]

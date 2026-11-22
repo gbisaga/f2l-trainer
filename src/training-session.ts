@@ -26,9 +26,17 @@ export class TrainingSession {
   }
 
   get reference() {
+    return this.solution()
+  }
+
+  get solutionOptions() {
+    return this.exercise?.definition.solutions ?? []
+  }
+
+  solution(index = 0) {
     if (!this.exercise) return
     const { definition, alignment } = this.exercise
-    return { number: definition.number, algorithm: alignedSolution(definition, alignment) }
+    return { number: definition.number, algorithm: alignedSolution(definition, alignment, index) }
   }
 
   describe() {
