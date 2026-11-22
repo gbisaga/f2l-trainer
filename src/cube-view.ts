@@ -4,7 +4,7 @@ import {
 } from 'three'
 import type { Quaternion } from 'three'
 import { faces } from './virtual-cube'
-import type { VirtualCube } from './virtual-cube'
+import type { Face, VirtualCube } from './virtual-cube'
 import { TurnPresentation } from './turn-presentation'
 
 export function createCubeView(
@@ -101,6 +101,10 @@ export function createCubeView(
   resize()
   return {
     requestDraw,
+    setColors(colors: Record<Face, number>) {
+      for (const face of Object.keys(colors) as Face[]) materials[face].color.setHex(colors[face])
+      requestDraw()
+    },
     enqueueTurn(move: string) {
       presentation.enqueue(move)
       requestDraw()

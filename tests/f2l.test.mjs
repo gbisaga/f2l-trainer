@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import { test } from 'node:test'
 import { cube3x3x3 } from 'cubing/puzzles'
-import { alignedSolution, alignments, cases, generateCase, pickCase } from '../src/f2l-cases.ts'
+import { alignedSolution, alignments, caseForSlot, cases, generateCase, pickCase } from '../src/f2l-cases.ts'
 import { isF2LSolved, protectedPiecesSolved, targetConfiguration, targetSolved } from '../src/f2l-completion.ts'
 import { TrainingSession } from '../src/training-session.ts'
 import { VirtualCube } from '../src/virtual-cube.ts'
@@ -73,6 +73,25 @@ test('F2L 10 defaults to SpeedCubeDB’s first solution and combines its alignme
   assert.equal(alignedSolution(definition, "U'"), "R U R' U R U R'")
   assert.equal(alignedSolution(definition, '', 1), "U2 R U' R' U' R U R'")
 })
+
+for (const slot of ['FL', 'BL', 'BR']) {
+  test(`all 41 cases and alternatives work in the ${slot} slot`, () => {
+    for (const canonical of cases) {
+      const definition = caseForSlot(canonical, slot)
+      for (const alignment of alignments) {
+        const initial = generateCase(definition, alignment)
+        assert.equal(protectedPiecesSolved(initial, slot), true)
+        assert.equal(targetSolved(initial, slot), false)
+        for (const index of definition.solutions.keys()) {
+          const attempt = new VirtualCube()
+          attempt.copyFrom(initial)
+          apply(attempt, alignedSolution(definition, alignment, index))
+          assert.equal(isF2LSolved(attempt, slot), true)
+        }
+      }
+    }
+  })
+}
 
 test('rejects a mismatched target configuration and a setup that damages protected pieces', () => {
   const definition = cases[0]

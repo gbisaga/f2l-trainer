@@ -4,6 +4,7 @@ import { Quaternion, Vector3 } from 'three'
 import { createFaceCalibration, faceIds } from '../src/face-calibration.ts'
 import { CubeOrientation } from '../src/orientation.ts'
 import { faces, VirtualCube } from '../src/virtual-cube.ts'
+import { cubeColors } from '../src/cube-colors.ts'
 import { cases, generateCase } from '../src/f2l-cases.ts'
 
 function ganSample({ x, y, z, w }) {
@@ -12,6 +13,24 @@ function ganSample({ x, y, z, w }) {
 
 test('home colors are yellow up, white down, and green front', () => {
   assert.deepEqual([faces.U.color, faces.D.color, faces.F.color], [0xf8d526, 0xf7f8ff, 0x17af62])
+})
+
+test('changing the displayed center colors rotates the palette and preserves opposite pairs', () => {
+  for (const top of faceIds) {
+    for (const front of faceIds) {
+      const colors = cubeColors(top, front)
+      if (faces[top].axis === faces[front].axis) {
+        assert.equal(colors, undefined)
+        continue
+      }
+      assert.equal(colors.U, faces[top].color)
+      assert.equal(colors.F, faces[front].color)
+      const opposite = face => faceIds.find(other => faces[face].axis === faces[other].axis && face !== other)
+      assert.equal(colors.D, faces[opposite(top)].color)
+      assert.equal(colors.B, faces[opposite(front)].color)
+      assert.equal(new Set(Object.values(colors)).size, 6)
+    }
+  }
 })
 
 test('all 24 adjacent-face calibrations map six faces and preserve turn direction', () => {

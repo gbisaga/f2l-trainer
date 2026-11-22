@@ -4,7 +4,9 @@ import { createInputState, formatQuaternion, logLimit, recordEvent } from './sta
 import { createCubeView } from './cube-view'
 import { CubeOrientation } from './orientation'
 import { faces, VirtualCube } from './virtual-cube'
-import { alignments, pickCase } from './f2l-cases'
+import { alignments, caseForSlot, pickCase } from './f2l-cases'
+import type { Slot } from './f2l-completion'
+import { colorNames, cubeColors } from './cube-colors'
 import { initializeCaseSelection } from './case-selection'
 import { createDebugPane } from './debug-pane'
 import { createInputRecording } from './input-recording'
@@ -26,6 +28,9 @@ const resetCube = document.querySelector<HTMLButtonElement>('#reset-cube')!
 const resetGyro = document.querySelector<HTMLButtonElement>('#reset-gyro')!
 const physicalTop = document.querySelector<HTMLSelectElement>('#physical-top')!
 const physicalFront = document.querySelector<HTMLSelectElement>('#physical-front')!
+const topColor = document.querySelector<HTMLSelectElement>('#top-color')!
+const frontColor = document.querySelector<HTMLSelectElement>('#front-color')!
+const targetSlot = document.querySelector<HTMLSelectElement>('#target-slot')!
 const calibrationStatus = document.querySelector('#calibration-status')!
 const virtualMove = document.querySelector('#virtual-move')!
 const mac = form.querySelector('input')!
@@ -62,17 +67,20 @@ const debug = createDebugPane(() => ({
 for (const face of faceIds) {
   physicalTop.add(new Option(face, face, face === 'D', face === 'D'))
   physicalFront.add(new Option(face, face, face === 'F', face === 'F'))
+  topColor.add(new Option(colorNames[face], face, face === 'U', face === 'U'))
+  frontColor.add(new Option(colorNames[face], face, face === 'F', face === 'F'))
 }
-function restrictFrontFaces() {
-  for (const option of physicalFront.options) {
-    option.disabled = faces[physicalTop.value as Face].axis === faces[option.value as Face].axis
+function restrictFrontFaces(top: HTMLSelectElement, front: HTMLSelectElement) {
+  for (const option of front.options) {
+    option.disabled = faces[top.value as Face].axis === faces[option.value as Face].axis
   }
-  if (physicalFront.selectedOptions[0]?.disabled) {
-    physicalFront.value = Array.from(physicalFront.options).find(option => !option.disabled)!.value
+  if (front.selectedOptions[0]?.disabled) {
+    front.value = Array.from(front.options).find(option => !option.disabled)!.value
   }
 }
-physicalTop.addEventListener('change', restrictFrontFaces)
-restrictFrontFaces()
+physicalTop.addEventListener('change', () => restrictFrontFaces(physicalTop, physicalFront))
+restrictFrontFaces(physicalTop, physicalFront)
+restrictFrontFaces(topColor, frontColor)
 
 function createLogRow(entry: (typeof state.recent)[number]) {
   const row = document.createElement('li')
@@ -109,6 +117,14 @@ try {
 
 let previousCase: number | undefined
 
+function updateCubeColors() {
+  restrictFrontFaces(topColor, frontColor)
+  const colors = cubeColors(topColor.value as Face, frontColor.value as Face)
+  if (colors) cubeView?.setColors(colors)
+}
+topColor.addEventListener('change', updateCubeColors)
+frontColor.addEventListener('change', updateCubeColors)
+
 const enabledCases = initializeCaseSelection(count => {
   newCase.disabled = !cubeView || count === 0
   emptyCaseSelection.hidden = count > 0
@@ -119,9 +135,11 @@ let justRetried = false
 function updatePractice(retried = false) {
   justRetried = retried
   const result = training.result
-  practiceStatus.textContent = result ? 'Solved' : training.active
-    ? (retried ? 'Case restored · Front-right slot' : 'Unsolved · Front-right slot')
-    : 'Select New Case to practice the front-right slot.'
+  const slotNames = { FR: 'front-right', FL: 'front-left', BL: 'back-left', BR: 'back-right' }
+  const slot = training.slot
+  practiceStatus.textContent = slot
+    ? `${result ? 'Solved' : retried ? 'Case restored' : 'Unsolved'} · ${slotNames[slot]} slot`
+    : 'Select New Case to practice.'
   practiceStatus.toggleAttribute('data-solved', Boolean(result))
   retryCase.disabled = !training.active
   hint.disabled = !training.active
@@ -161,7 +179,7 @@ function updateSolution() {
 newCase.addEventListener('click', () => {
   const definition = pickCase(enabledCases(), previousCase)
   if (!definition) return
-  training.start(definition, alignments[Math.floor(Math.random() * alignments.length)])
+  training.start(caseForSlot(definition, targetSlot.value as Slot), alignments[Math.floor(Math.random() * alignments.length)])
   solutionOption.replaceChildren(...training.solutionOptions.map(([notation], index) =>
     new Option(`${index + 1}. ${notation}`, String(index))))
   previousCase = definition.number

@@ -3,6 +3,7 @@ import { protectedPiecesSolved, targetConfiguration, targetSolved } from './f2l-
 import type { Slot } from './f2l-completion.ts'
 import { sourceSolutions } from './f2l-solutions.ts'
 import type { SourceSolution } from './f2l-solutions.ts'
+import type { Face } from './virtual-cube.ts'
 
 export interface F2LCase {
   number: number
@@ -67,6 +68,33 @@ export const cases: readonly F2LCase[] = sourceCases.map(
     solutions: sourceSolutions[number - 1], expected: { corner, edge },
   }),
 )
+
+const slotRotations: Record<Slot, Record<Face, Face>> = {
+  FR: { F: 'F', R: 'R', B: 'B', L: 'L', U: 'U', D: 'D' },
+  FL: { F: 'L', R: 'F', B: 'R', L: 'B', U: 'U', D: 'D' },
+  BL: { F: 'B', R: 'L', B: 'F', L: 'R', U: 'U', D: 'D' },
+  BR: { F: 'R', R: 'B', B: 'L', L: 'F', U: 'U', D: 'D' },
+}
+
+export function caseForSlot(definition: F2LCase, slot: Slot): F2LCase {
+  if (slot === 'FR') return definition
+  const map = slotRotations[slot]
+  const moves = (algorithm: string) => algorithm.replace(/[URFDLB]/g, face => map[face as Face])
+  const signature = (value: string) => value.split(' ').map(sticker => {
+    const [position, orientation] = sticker.split(':')
+    return `${[...moves(position)].sort().join('')}:${moves(orientation)}`
+  }).sort().join(' ')
+  const rotateSolution = ([original, fixed]: SourceSolution): SourceSolution => {
+    const rotated = moves(fixed ?? original)
+    return [rotated]
+  }
+  const [first, ...rest] = definition.solutions
+  return {
+    ...definition, slot, setup: moves(definition.setup),
+    solutions: [rotateSolution(first), ...rest.map(rotateSolution)],
+    expected: { corner: signature(definition.expected.corner), edge: signature(definition.expected.edge) },
+  }
+}
 
 export const alignments = ['', 'U', 'U2', "U'"] as const
 export type Alignment = typeof alignments[number]

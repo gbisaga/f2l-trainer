@@ -25,6 +25,10 @@ export class TrainingSession {
     return this.exercise !== undefined
   }
 
+  get slot() {
+    return this.exercise?.definition.slot
+  }
+
   get reference() {
     return this.solution()
   }
