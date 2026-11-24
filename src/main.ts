@@ -52,6 +52,8 @@ const solutionChoice = document.querySelector<HTMLElement>('#solution-choice')!
 const solutionOption = document.querySelector<HTMLSelectElement>('#solution-option')!
 const practiceStatus = document.querySelector('#practice-status')!
 const solution = document.querySelector<HTMLElement>('#solution')!
+const solveHere = document.querySelector<HTMLButtonElement>('#solve-current')!
+const currentSolution = document.querySelector<HTMLElement>('#current-solution')!
 const times = document.querySelector<HTMLElement>('#times')!
 const emptyCaseSelection = document.querySelector<HTMLElement>('#empty-case-selection')!
 const debug = createDebugPane(() => ({
@@ -131,6 +133,44 @@ const enabledCases = initializeCaseSelection(count => {
 })
 
 let justRetried = false
+let cubeRevision = 0
+
+function clearCurrentSolution() {
+  cubeRevision++
+  currentSolution.hidden = true
+  currentSolution.replaceChildren()
+}
+
+solveHere.addEventListener('click', async () => {
+  const revision = cubeRevision
+  const slot = training.slot
+  const snapshot = new VirtualCube()
+  snapshot.copyFrom(virtualCube)
+  solveHere.disabled = true
+  currentSolution.hidden = false
+  currentSolution.textContent = 'Finding a solution…'
+  try {
+    const { solveCurrent } = await import('./solve-current')
+    const algorithm = await solveCurrent(snapshot, slot)
+    if (revision !== cubeRevision) {
+      if (!currentSolution.hidden) currentSolution.textContent = 'The cube moved. Click Solve from here to try again.'
+      return
+    }
+    if (!algorithm) {
+      currentSolution.textContent = slot ? 'The first two layers are already solved.' : 'The cube is already solved.'
+      return
+    }
+    const heading = document.createElement('p')
+    heading.textContent = slot ? 'Finish F2L from this position' : 'Solve the cube from this position'
+    const turns = document.createElement('code')
+    turns.textContent = algorithm
+    currentSolution.replaceChildren(heading, turns)
+  } catch {
+    if (!currentSolution.hidden) currentSolution.textContent = 'Could not find a solution. Try Solve from here again.'
+  } finally {
+    solveHere.disabled = false
+  }
+})
 
 function updatePractice(retried = false) {
   justRetried = retried
@@ -180,6 +220,7 @@ newCase.addEventListener('click', () => {
   const definition = pickCase(enabledCases(), previousCase)
   if (!definition) return
   training.start(caseForSlot(definition, targetSlot.value as Slot), alignments[Math.floor(Math.random() * alignments.length)])
+  clearCurrentSolution()
   solutionOption.replaceChildren(...training.solutionOptions.map(([notation], index) =>
     new Option(`${index + 1}. ${notation}`, String(index))))
   previousCase = definition.number
@@ -191,6 +232,7 @@ newCase.addEventListener('click', () => {
 
 retryCase.addEventListener('click', () => {
   training.retry()
+  clearCurrentSolution()
   updateSolution()
   updatePractice(true)
   debug.clearTurns('Retry Case')
@@ -239,6 +281,7 @@ function setConnection(message: string, busy = false) {
 resetCube.addEventListener('click', () => {
   training.cancel()
   virtualCube.reset()
+  clearCurrentSolution()
   updateSolution()
   updatePractice()
   debug.clearTurns('Reset Virtual Cube')
@@ -322,6 +365,7 @@ form.addEventListener('submit', event => {
         const applied = virtualCube.applyMove(mappedMove)
         const completedAttempt = applied && training.recordTurn(receivedAt)
         if (applied) {
+          cubeRevision++
           if (completedAttempt || justRetried) updatePractice()
           cubeView?.enqueueTurn(mappedMove)
         }

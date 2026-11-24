@@ -40,7 +40,9 @@ device on the same browser and site origin.
 
 Read the solution using the cube’s calibrated grip. In that grip, `U` means turn the top, `R` means turn the right face, and `F` means turn the front. The **Face IDs reported by your cube** line helps you compare the solution with the Bluetooth readout if your cube labels those faces differently.
 
-Open **On-screen cube colors** beside the cube to choose its top and front center colors. The other colors follow the same color scheme, and you can keep holding your physical cube with yellow up and green facing you. With a different on-screen top color, the practice cross uses the opposite color.
+Select **Solve from here** for turns to finish F2L from the position currently on screen. In free-turn mode it shows a full-cube solution. You make the turns yourself.
+
+Open **On-screen cube colors** below the cube to choose its top and front center colors. The other colors follow the same color scheme, and you can keep holding your physical cube with yellow up and green facing you. With a different on-screen top color, the practice cross uses the opposite color.
 
 The [SpeedCubeDB F2L library](https://www.speedcubedb.com/a/3x3/F2L) defines the case numbering and source setups. Cases 8 and 13 use outer-turn setups with matching target-piece configurations. Timings use the first rendered frame and the browser's receipt of face-turn events.
 

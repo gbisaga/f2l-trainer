@@ -55,6 +55,7 @@
           </label>
           <button id="reset-cube" type="button">Reset Virtual Cube</button>
           <button id="reset-gyro" type="button" aria-describedby="gyro-help" disabled>Reset Gyro</button>
+          <button id="solve-current" type="button" aria-controls="current-solution">Solve from here</button>
         </div>
         <p id="empty-case-selection" role="status" hidden>No cases selected. Open Select F2L Cases and choose at least one.</p>
         <p id="practice-status" role="status">Select New Case to practice.</p>
@@ -75,19 +76,22 @@
               <select id="solution-option"></select>
             </label>
             <div id="solution" aria-live="polite" hidden></div>
-            <details class="calibration-controls">
-              <summary>On-screen cube colors</summary>
-              <label>Top center <select id="top-color"></select></label>
-              <label>Front center <select id="front-color"></select></label>
-            </details>
-            <details class="calibration-controls">
-              <summary>Gyro calibration</summary>
-              <p id="gyro-help">Hold the chosen physical faces up and toward you, then select Reset Gyro. Use the physical turn readout to identify a face.</p>
-              <label>Physical top face <select id="physical-top"></select></label>
-              <label>Physical front face <select id="physical-front"></select></label>
-              <p id="calibration-status" role="status">Default mapping: physical D → virtual U, physical F → virtual F.</p>
-            </details>
+            <div id="current-solution" aria-live="polite" hidden></div>
           </aside>
+        </div>
+        <div class="cube-settings">
+          <details class="calibration-controls">
+            <summary>On-screen cube colors</summary>
+            <label>Top center <select id="top-color"></select></label>
+            <label>Front center <select id="front-color"></select></label>
+          </details>
+          <details class="calibration-controls">
+            <summary>Gyro calibration</summary>
+            <p id="gyro-help">Hold the chosen physical faces up and toward you, then select Reset Gyro. Use the physical turn readout to identify a face.</p>
+            <label>Physical top face <select id="physical-top"></select></label>
+            <label>Physical front face <select id="physical-front"></select></label>
+            <p id="calibration-status" role="status">Default mapping: physical D → virtual U, physical F → virtual F.</p>
+          </details>
         </div>
       </section>
 
