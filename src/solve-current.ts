@@ -1,6 +1,7 @@
 import { KPattern } from 'cubing/kpuzzle'
 import { cube3x3x3 } from 'cubing/puzzles'
-import { faceLabels, isF2LSolved } from './f2l-completion.ts'
+import { alignedSolution, alignments, caseForSlot, cases } from './f2l-cases.ts'
+import { faceLabels, isF2LSolved, protectedPiecesSolved, targetConfiguration } from './f2l-completion.ts'
 import type { Slot } from './f2l-completion.ts'
 import { VirtualCube } from './virtual-cube.ts'
 
@@ -37,11 +38,29 @@ export async function patternFromCube(cube: VirtualCube) {
   })
 }
 
+function listedSolution(cube: VirtualCube, slot: Slot) {
+  if (!protectedPiecesSolved(cube, slot)) return
+  const probe = new VirtualCube()
+  probe.copyFrom(cube)
+  const definitions = cases.map(definition => caseForSlot(definition, slot))
+  for (const alignment of alignments) {
+    const { corner, edge } = targetConfiguration(probe, slot)
+    const matching = definitions.find(({ expected }) => expected.corner === corner && expected.edge === edge)
+    if (matching) return alignedSolution(matching, alignment)
+    // Each successive probe undoes one more top turn from the captured position.
+    probe.applyMove("U'")
+  }
+}
+
 export async function solveCurrent(cube: VirtualCube, slot?: Slot) {
   // Work from a copy captured before loading the solver or waiting on its worker.
   const snapshot = new VirtualCube()
   snapshot.copyFrom(cube)
-  if (slot && isF2LSolved(snapshot, slot)) return ''
+  if (slot) {
+    if (isF2LSolved(snapshot, slot)) return ''
+    const preferred = listedSolution(snapshot, slot)
+    if (preferred) return preferred
+  }
   const pattern = await patternFromCube(snapshot)
   if (pattern.isIdentical(pattern.kpuzzle.defaultPattern())) return ''
   const { experimentalSolve3x3x3IgnoringCenters, setSearchDebug } = await import('cubing/search')

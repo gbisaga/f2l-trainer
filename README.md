@@ -40,7 +40,7 @@ device on the same browser and site origin.
 
 Read the solution using the cube’s calibrated grip. In that grip, `U` means turn the top, `R` means turn the right face, and `F` means turn the front. The **Face IDs reported by your cube** line helps you compare the solution with the Bluetooth readout if your cube labels those faces differently.
 
-Select **Solve from here** for turns to finish F2L from the position currently on screen. In free-turn mode it shows a full-cube solution. You make the turns yourself.
+Select **Solve from here** for turns to finish F2L from the position currently on screen. If it matches a listed case, the trainer shows SpeedCubeDB’s first solution with any needed top-layer turn included. A general solver handles disturbed crosses or other slots and returns a full-cube solution in free-turn mode. You make the turns yourself.
 
 Open **On-screen cube colors** below the cube to choose its top and front center colors. The other colors follow the same color scheme, and you can keep holding your physical cube with yellow up and green facing you. With a different on-screen top color, the practice cross uses the opposite color.
 
